@@ -1,125 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Virtual Pet</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', sans-serif;
-            background: #ffeecf;
-            text-align: center;
-            padding: 40px;
-        }
-        h1 {
-            color: #ff6f00;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px;
-            font-size: 16px;
-        }
-        .button {
-            background-color: #ff8a00;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-        }
-        .status {
-            margin-top: 20px;
-            font-size: 20px;
-        }
-        .status div {
-            margin: 5px 0;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Virtual Pet</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(to right, #ffecd2, #fcb69f);
+      text-align: center;
+      padding: 30px;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .button {
+      background-color: #ff8c42;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 12px 20px;
+      font-size: 16px;
+      margin: 8px;
+      cursor: pointer;
+      transition: background-color 0.2s ease-in-out;
+    }
+
+    .button:hover {
+      background-color: #ff6f00;
+    }
+
+    input[type="text"] {
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    #petAvatar {
+      width: 180px;
+      height: 180px;
+      margin: 20px auto;
+    }
+
+    #statusSection {
+      margin-top: 20px;
+      background: #fff6e6;
+      padding: 15px;
+      border-radius: 12px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+      font-size: 18px;
+    }
+
+    .status-line {
+      margin: 5px 0;
+    }
+
+    .dead {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
 </head>
 <body>
 
-<h1>🐶 Virtual Pet</h1>
+<h1>🐶 Your Virtual Pet</h1>
 
 <div id="startSection">
-    <input type="text" id="petName" placeholder="Enter your pet's name">
-    <button class="button" onclick="startPet()">Start Pet</button>
+  <input type="text" id="petName" placeholder="Enter your pet's name">
+  <button class="button" onclick="startPet()">Start Pet</button>
 </div>
 
 <div id="petSection" style="display:none;">
-    <h2 id="petNameDisplay"></h2>
-    <button class="button" onclick="feedPet()">Feed</button>
-    <button class="button" onclick="playPet()">Play</button>
-    <button class="button" onclick="giveToy()">Give Toy</button>
-    <br>
-    <input type="text" id="userInput" placeholder="How are you feeling?">
-    <button class="button" onclick="talkToPet()">Talk to Pet</button>
-    <button class="button" onclick="showStatus()">Show Status</button>
-    <div class="status" id="statusSection"></div>
+  <h2 id="petNameDisplay"></h2>
+  <img id="petAvatar" src="{{ url_for('static', filename='puppy.png') }}" alt="Pet Image">
+  <br>
+  <button class="button" onclick="feedPet()">🍗 Feed</button>
+  <button class="button" onclick="playPet()">🎾 Play</button>
+  <button class="button" onclick="giveToy()">🧸 Give Toy</button>
+  <br><br>
+  <input type="text" id="userInput" placeholder="How are you feeling?">
+  <button class="button" onclick="talkToPet()">💬 Talk</button>
+  <button class="button" onclick="showStatus()">📊 Show Status</button>
+  <div class="status" id="statusSection"></div>
+</div>
+
+<div id="restartSection" style="display:none;">
+  <br>
+  <input type="text" id="newPetName" placeholder="Enter a new pet's name">
+  <button class="button" onclick="restartPet()">🔁 Restart Pet</button>
 </div>
 
 <script>
-    function startPet() {
-        const petName = document.getElementById("petName").value;
-        fetch('/start_pet', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({pet_name: petName})
-        })
-        .then(res => res.json())
-        .then(data => {
-            document.getElementById("petNameDisplay").innerText = "Your pet: " + petName;
-            document.getElementById("startSection").style.display = "none";
-            document.getElementById("petSection").style.display = "block";
-            updateStatusMessage(data.message);
-            showStatus();
-        });
+  function startPet() {
+    const petName = document.getElementById("petName").value.trim();
+    if (!petName) {
+      alert("Please enter a name!");
+      return;
+    }
+    fetch('/start_pet', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ pet_name: petName })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("petNameDisplay").innerText = "🐾 " + petName + " is here!";
+      document.getElementById("startSection").style.display = "none";
+      document.getElementById("petSection").style.display = "block";
+      document.getElementById("restartSection").style.display = "none";
+      enableButtons();
+      updateStatusMessage(data.message);
+      showStatus();
+    });
+  }
+
+  function restartPet() {
+    const newName = document.getElementById("newPetName").value.trim();
+    if (!newName) {
+      alert("Please enter a new pet name!");
+      return;
     }
 
-    function sendAction(url, body = null) {
-        fetch(url, {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: body ? JSON.stringify(body) : null
-        })
-        .then(res => res.json())
-        .then(data => {
-            updateStatusMessage(data.message);
-            if (data.status) updateStatus(data.status);
-        });
+    fetch('/start_pet', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pet_name: newName })
+    })
+    .then(res => res.json())
+    .then(data => {
+      document.getElementById("petNameDisplay").innerText = "🐾 " + newName + " is here!";
+      document.getElementById("restartSection").style.display = "none";
+      document.getElementById("statusSection").innerHTML = `<div class="status-line"><strong>${data.message}</strong></div>`;
+      document.getElementById("userInput").value = "";
+      document.getElementById("newPetName").value = "";
+      enableButtons();
+      showStatus();
+    });
+  }
+
+  function sendAction(url, body = null) {
+    fetch(url, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: body ? JSON.stringify(body) : null
+    })
+    .then(res => res.json())
+    .then(data => {
+      updateStatusMessage(data.message);
+      if (data.status) updateStatus(data.status);
+    });
+  }
+
+  function feedPet() { sendAction('/feed'); }
+  function playPet() { sendAction('/play'); }
+  function giveToy() { sendAction('/give_toy'); }
+
+  function talkToPet() {
+    const input = document.getElementById("userInput").value.trim();
+    if (input !== "") {
+      sendAction('/talk', { user_input: input });
+      document.getElementById("userInput").value = "";
+    }
+  }
+
+  function showStatus() {
+    fetch('/status', { method: 'POST' })
+    .then(res => res.json())
+    .then(data => updateStatus(data.status));
+  }
+
+  function updateStatusMessage(message) {
+    const statusSection = document.getElementById("statusSection");
+    statusSection.innerHTML = `<div class="status-line"><strong>${message}</strong></div>`;
+  }
+
+  function updateStatus(status) {
+    const statusSection = document.getElementById("statusSection");
+
+    if (!status.alive) {
+      statusSection.innerHTML = `<div class='status-line dead'>💀 Your pet has passed away.</div>`;
+      disableButtons();
+      document.getElementById("restartSection").style.display = "block";
+      return;
     }
 
-    function feedPet() { sendAction('/feed'); }
-    function playPet() { sendAction('/play'); }
-    function giveToy() { sendAction('/give_toy'); }
+    statusSection.innerHTML += `
+      <div class="status-line">❤️ Health: ${status.health}/100</div>
+      <div class="status-line">🍽️ Hunger: ${status.hunger}/100</div>
+      <div class="status-line">😊 Mood: ${status.mood}/100</div>
+      <div class="status-line">🐾 Status: ${status.status}</div>
+    `;
+  }
 
-    function talkToPet() {
-        const input = document.getElementById("userInput").value;
-        sendAction('/talk', {user_input: input});
-    }
+  function disableButtons() {
+    const all = document.querySelectorAll("#petSection button.button");
+    all.forEach(btn => btn.disabled = true);
+  }
 
-    function showStatus() {
-        fetch('/status', {method: 'POST'})
-        .then(res => res.json())
-        .then(data => updateStatus(data.status));
-    }
-
-    function updateStatusMessage(message) {
-        const statusSection = document.getElementById("statusSection");
-        statusSection.innerHTML = `<div><strong>${message}</strong></div>`;
-    }
-
-    function updateStatus(status) {
-        const statusSection = document.getElementById("statusSection");
-        if (!status.alive) {
-            statusSection.innerHTML += "<div>💀 Your pet has died. Game over.</div>";
-            document.querySelectorAll("button.button").forEach(btn => btn.disabled = true);
-            return;
-        }
-        statusSection.innerHTML += `
-            <div>❤️ Health: ${status.health}/100</div>
-            <div>🍽️ Hunger: ${status.hunger}/100</div>
-            <div>😊 Mood: ${status.mood}/100</div>
-            <div>🐾 Status: ${status.status}</div>
-        `;
-    }
+  function enableButtons() {
+    const all = document.querySelectorAll("#petSection button.button");
+    all.forEach(btn => btn.disabled = false);
+  }
 </script>
 
 </body>
