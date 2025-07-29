@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-import time
+import os
 
 app = Flask(__name__)
 
@@ -16,23 +16,22 @@ class VirtualPet:
             return f"{self.name} is no longer with us 💔"
         if self.hunger <= 10:
             return f"{self.name} is already full and happy! 🍗"
-        else:
-            self.hunger = max(0, self.hunger - 30)
-            self.mood = min(100, self.mood + 10)
-            return f"{self.name} is eating joyfully!"
+        self.hunger = max(0, self.hunger - 30)
+        self.mood = min(100, self.mood + 10)
+        return f"{self.name} is munching happily! 🦴"
 
     def play(self):
         if not self.alive:
             return f"{self.name} can't play anymore... 💀"
         self.mood = min(100, self.mood + 20)
         self.hunger = min(100, self.hunger + 15)
-        return f"{self.name} is playing happily! 🐾"
+        return f"{self.name} is wagging its tail and running around! 🐾"
 
     def give_toy(self):
         if not self.alive:
             return f"{self.name} doesn't react... 🪦"
         self.mood = min(100, self.mood + 15)
-        return f"{self.name} is excited with the toy! 🎁"
+        return f"{self.name} is chewing the toy with joy! 🎁"
 
     def update_health(self):
         if self.hunger >= 90:
@@ -73,16 +72,28 @@ class VirtualPet:
 
     def respond_to_emotion(self, user_input):
         if not self.alive:
-            return f"{self.name} can't hear you anymore... 💀"
-        lower_input = user_input.lower()
-        if any(word in lower_input for word in ["sad", "tired", "angry", "depressed"]):
+            return f"{self.name} is sleeping forever now... 💀"
+
+        msg = user_input.lower()
+
+        if any(word in msg for word in ["sad", "tired", "upset", "depressed", "cry"]):
             self.mood = min(100, self.mood + 10)
-            return f"{self.name} cuddles next to you to cheer you up 💖"
-        elif any(word in lower_input for word in ["happy", "great", "excited", "joy"]):
+            return f"{self.name} snuggles up close and gently licks your hand 🐶💖"
+        elif any(word in msg for word in ["angry", "mad", "annoyed"]):
             self.mood = min(100, self.mood + 5)
-            return f"{self.name} is jumping with joy seeing you happy! 🐕"
-        else:
-            return f"{self.name} tilts head in curiosity 🤔"
+            return f"{self.name} looks at you with puppy eyes and rests its head on your lap 🐕"
+        elif any(word in msg for word in ["happy", "great", "excited", "joy", "good", "awesome"]):
+            self.mood = min(100, self.mood + 5)
+            return f"{self.name} barks excitedly and jumps around! 🐾✨"
+        elif any(word in msg for word in ["love you", "miss you", "cute", "best"]):
+            self.mood = min(100, self.mood + 7)
+            return f"{self.name} rolls over and gives you the happiest tail wag ever! 🥰"
+        elif any(word in msg for word in ["hello", "hi", "hey"]):
+            return f"{self.name} wags tail and says *woof woof*! 👋🐶"
+        elif any(word in msg for word in ["what's up", "sup", "yo"]):
+            return f"{self.name} tilts its head and gives a little bark! 🐶"
+
+        return f"{self.name} tilts its head curiously and listens to you 🤔🐾"
 
     def tick(self):
         if not self.alive:
@@ -94,6 +105,8 @@ class VirtualPet:
     def die(self):
         self.alive = False
 
+
+# Global pet instance
 pet = None
 
 @app.route('/')
@@ -103,7 +116,7 @@ def home():
 @app.route('/start_pet', methods=['POST'])
 def start_pet():
     global pet
-    name = request.json.get('pet_name')
+    name = request.json.get('pet_name', 'Pet')
     pet = VirtualPet(name)
     return jsonify(message=f"Your pet {name} is ready to play! 🐾")
 
@@ -143,8 +156,7 @@ def talk_to_pet():
 @app.route('/status', methods=['POST'])
 def show_status():
     if pet:
-        status = pet.show_status()
-        return jsonify(status=status)
+        return jsonify(status=pet.show_status())
     return jsonify(message="Pet is not initialized.")
 
 if __name__ == "__main__":
