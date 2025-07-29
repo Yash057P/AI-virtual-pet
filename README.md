@@ -1,80 +1,63 @@
-🐶 Virtual Pet AI Assistant – Flask Web App
-📌 Overview
+🐶 **Virtual Pet AI Assistant – Flask Web App**<br><br>
+📌**Overview**:<br>
 This is a virtual pet simulation built using Python (Flask) and HTML/CSS/JavaScript. The pet responds to your actions and emotional inputs like a real companion, and its health and mood change over time. If you ignore your pet, it may sadly pass away — but don’t worry, you can adopt a new one!
 
-🎯 Features
-✅ Create a new pet with a custom name
+🎯 Features:<br>
+✅ Create a new pet with a custom name<br>
+🍗 Feed, 🎾 Play, 🧸 Give Toy, 💬 Talk to the pet<br>
+📉 Stats decay over time (hunger/mood)<br>
+🧠 Emotion-aware response system (e.g., reacts to "sad", "happy", etc.)<br>
+⚰️ Pet can die if neglected (health = 0)<br>
+🔁 Restart the game with a new pet<br>
+🖼️ Cute pet avatar and dynamic interface<br>
 
-🍗 Feed, 🎾 Play, 🧸 Give Toy, 💬 Talk to the pet
+💻 Technologies Used:<br>
 
-📉 Stats decay over time (hunger/mood)
+Python -- Backend logic (Flask)<br>
+Flask -- API routes & state engine<br>
+HTML/CSS -- Web UI<br>
+JavaScript -- Frontend logic & fetch API<br>
+Jinja2 -- Flask templating<br>
 
-🧠 Emotion-aware response system (e.g., reacts to "sad", "happy", etc.)
+📁 Project Structure<br>
+virtual-pet/<br>
+├── app.py<br>
+├── static/<br>
+│   └── puppy.png<br>
+├── templates/<br>
+│   └── index.html<br>
+└── README.md<br>
 
-⚰️ Pet can die if neglected (health = 0)
+**🚀 How to Run<br>**
 
-🔁 Restart the game with a new pet
+1. Install Flask<br>
+Make sure Python is installed. Then run:<br>
 
-🖼️ Cute pet avatar and dynamic interface
+"pip install flask"<br>
 
-💻 Technologies Used
-Tool	Purpose
-Python	Backend logic (Flask)
-Flask	API routes & state engine
-HTML/CSS	Web UI
-JavaScript	Frontend logic & fetch API
-Jinja2	Flask templating
+2. Run the App<br>
+In the project folder:<br>
 
-📁 Project Structure
-csharp
-Copy
-Edit
-virtual-pet/
-├── app.py                      # Flask backend
-├── static/
-│   └── puppy.png              # Pet avatar image
-├── templates/
-│   └── index.html             # Frontend HTML
-└── README.md                  # This file
-🚀 How to Run
-Install Flask
-Make sure Python is installed. Then run:
+"python app.py"<br>
 
-bash
-Copy
-Edit
-pip install flask
-Run the App
-In the project folder:
+3. Open in Browser<br>
+Go to:<br>
 
-bash
-Copy
-Edit
-python app.py
-Open in Browser
-Go to:
+http://localhost:5000<br>
 
-arduino
-Copy
-Edit
-http://localhost:5000
-🧠 Emotion Detection
-The pet responds to how you’re feeling. Try entering:
+**🧠 Emotion Detection<br>**
 
-"I’m sad" → Pet will comfort you 💖
+The pet responds to how you’re feeling. Try entering:<br>
 
-"I’m happy" → Pet will jump with joy 🐾
+"I’m sad" → Pet will comfort you 💖<br>
 
-"I love you" → Pet gives you cuddles 🥰
+"I’m happy" → Pet will jump with joy 🐾<br>
 
-📸 Screenshots (Optional)
-Add screenshots here if you're uploading to GitHub for visual reference.
+"I love you" → Pet gives you cuddles 🥰<br>
 
-✨ Future Enhancements
- Mood-based pet avatar change
+✨ Future Enhancements<br>
+ Mood-based pet avatar change<br>
 
- Add sound effects (bark/meow)
+ Add sound effects (bark/meow)<br>
 
- Deploy online (Render/Heroku)
-
- Use localStorage or database for saving pet state
+ Deploy online (Render/Heroku)<br>
